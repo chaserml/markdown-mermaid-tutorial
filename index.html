@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown & Mermaid Tutorial</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f7fafc;
+            border-bottom: 2px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 18px 30px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .split-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .editor-panel, .preview-panel {
+            background: #f7fafc;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .panel-header {
+            background: #2d3748;
+            color: white;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .editor-content {
+            padding: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            border: none;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #cbd5e0;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .preview-content {
+            padding: 20px;
+            min-height: 400px;
+            background: white;
+            overflow-x: auto;
+        }
+
+        .lesson {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+
+        .lesson h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        .lesson h3 {
+            color: #4a5568;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .lesson p {
+            color: #4a5568;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .lesson ul, .lesson ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .lesson li {
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .code-example {
+            background: #2d3748;
+            color: #a0aec0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .code-example code {
+            color: #68d391;
+        }
+
+        .try-it-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .try-it-button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .preview-content h1, .preview-content h2, .preview-content h3 {
+            color: #2d3748;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .preview-content p {
+            color: #4a5568;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .preview-content code {
+            background: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #e53e3e;
+            font-size: 0.9em;
+        }
+
+        .preview-content pre {
+            background: #2d3748;
+            color: #a0aec0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .preview-content pre code {
+            background: transparent;
+            color: #68d391;
+            padding: 0;
+        }
+
+        .preview-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .preview-content th, .preview-content td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .preview-content th {
+            background: #edf2f7;
+            font-weight: 600;
+        }
+
+        .preview-content blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+            margin: 15px 0;
+            color: #4a5568;
+            font-style: italic;
+        }
+
+        @media (max-width: 968px) {
+            .split-view {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .info-box {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .info-box strong {
+            color: #2c5282;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Markdown & Mermaid Tutorial</h1>
+            <p>Interactive guide for MAC team - Learn by doing!</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('markdown-basics')">Markdown Basics</button>
+            <button class="nav-tab" onclick="showTab('markdown-advanced')">Markdown Advanced</button>
+            <button class="nav-tab" onclick="showTab('mermaid-flowcharts')">Flowcharts</button>
+            <button class="nav-tab" onclick="showTab('mermaid-erd')">ERD Diagrams</button>
+            <button class="nav-tab" onclick="showTab('mermaid-uml')">UML Diagrams</button>
+            <button class="nav-tab" onclick="showTab('playground')">Playground</button>
+        </div>
+
+        <div class="content">
+            <!-- Markdown Basics -->
+            <div id="markdown-basics" class="tab-content active">
+                <div class="lesson">
+                    <h2>Markdown Basics</h2>
+                    <p>Markdown is a lightweight markup language that you can use to add formatting elements to plaintext documents. It's widely used for documentation, README files, and note-taking.</p>
+
+                    <h3>Headers</h3>
+                    <div class="code-example">
+# H1 Header
+## H2 Header
+### H3 Header
+#### H4 Header
+##### H5 Header
+###### H6 Header
+                    </div>
+
+                    <h3>Text Formatting</h3>
+                    <div class="code-example">
+**Bold text**
+*Italic text*
+***Bold and italic***
+~~Strikethrough~~
+                    </div>
+
+                    <h3>Lists</h3>
+                    <div class="code-example">
+Unordered list:
+- Item 1
+- Item 2
+  - Sub-item 2.1
+  - Sub-item 2.2
+
+Ordered list:
+1. First item
+2. Second item
+3. Third item
+                    </div>
+
+                    <h3>Links and Images</h3>
+                    <div class="code-example">
+[Link text](https://example.com)
+![Image alt text](image-url.jpg)
+                    </div>
+
+                    <h3>Code</h3>
+                    <div class="code-example">
+Inline code: `var x = 10;`
+
+Code block:
+```javascript
+function hello() {
+    console.log("Hello, World!");
+}
+```
+                    </div>
+
+                    <button class="try-it-button" onclick="loadExample('markdown-basic')">Try This Example</button>
+                </div>
+            </div>
+
+            <!-- Markdown Advanced -->
+            <div id="markdown-advanced" class="tab-content">
+                <div class="lesson">
+                    <h2>Advanced Markdown</h2>
+
+                    <h3>Tables</h3>
+                    <div class="code-example">
+| Column 1 | Column 2 | Column 3 |
+|----------|----------|----------|
+| Row 1    | Data     | More     |
+| Row 2    | Data     | More     |
+
+Alignment:
+| Left | Center | Right |
+|:-----|:------:|------:|
+| L    | C      | R     |
+                    </div>
+
+                    <h3>Blockquotes</h3>
+                    <div class="code-example">
+> This is a blockquote
+> It can span multiple lines
+>
+> And have multiple paragraphs
+                    </div>
+
+                    <h3>Horizontal Rules</h3>
+                    <div class="code-example">
+---
+***
+___
+                    </div>
+
+                    <h3>Task Lists</h3>
+                    <div class="code-example">
+- [x] Completed task
+- [ ] Incomplete task
+- [ ] Another task
+                    </div>
+
+                    <h3>Nested Lists</h3>
+                    <div class="code-example">
+1. First level
+   - Second level
+     - Third level
+       1. Fourth level
+2. Back to first level
+                    </div>
+
+                    <button class="try-it-button" onclick="loadExample('markdown-advanced')">Try This Example</button>
+                </div>
+            </div>
+
+            <!-- Mermaid Flowcharts -->
+            <div id="mermaid-flowcharts" class="tab-content">
+                <div class="lesson">
+                    <h2>Mermaid Flowcharts</h2>
+                    <p>Flowcharts are diagrams that represent workflows or processes. They use different shapes to represent different types of steps.</p>
+
+                    <h3>Basic Flowchart Syntax</h3>
+                    <div class="info-box">
+                        <strong>Node Shapes:</strong><br>
+                        • <code>[]</code> - Rectangle (process)<br>
+                        • <code>()</code> - Rounded rectangle<br>
+                        • <code>{{}}</code> - Hexagon<br>
+                        • <code>[]</code> - Square brackets<br>
+                        • <code>&gt;</code> - Flag shape<br>
+                        • <code>{}</code> - Diamond (decision)
+                    </div>
+
+                    <h3>Simple Process Flow</h3>
+                    <div class="code-example">
+```mermaid
+flowchart TD
+    A[Start] --> B{Decision?}
+    B -->|Yes| C[Process 1]
+    B -->|No| D[Process 2]
+    C --> E[End]
+    D --> E
+```
+                    </div>
+
+                    <h3>Municipal Billing Process Example</h3>
+                    <div class="code-example">
+```mermaid
+flowchart LR
+    A[Receive Water Usage Data] --> B[Calculate Charges]
+    B --> C{Amount > $1000?}
+    C -->|Yes| D[Manager Approval Required]
+    C -->|No| E[Generate Invoice]
+    D --> F{Approved?}
+    F -->|Yes| E
+    F -->|No| G[Return to Review]
+    E --> H[Send to QuickBooks]
+    H --> I[Mail Invoice]
+```
+                    </div>
+
+                    <h3>Direction Options</h3>
+                    <div class="code-example">
+flowchart TD  (Top to Down)
+flowchart LR  (Left to Right)
+flowchart RL  (Right to Left)
+flowchart BT  (Bottom to Top)
+                    </div>
+
+                    <button class="try-it-button" onclick="loadExample('flowchart')">Try This Example</button>
+                </div>
+            </div>
+
+            <!-- Mermaid ERD -->
+            <div id="mermaid-erd" class="tab-content">
+                <div class="lesson">
+                    <h2>Entity Relationship Diagrams (ERD)</h2>
+                    <p>ERDs show the relationships between entities in a database. Perfect for documenting your SQL Server schemas at MAC.</p>
+
+                    <h3>Basic ERD Syntax</h3>
+                    <div class="info-box">
+                        <strong>Relationship Types:</strong><br>
+                        • <code>||--||</code> - One to one<br>
+                        • <code>||--o{</code> - One to many<br>
+                        • <code>}o--o{</code> - Many to many<br>
+                        • <code>||--|{</code> - One to one or many<br>
+                        • <code>o|--|{</code> - Zero or one to many
+                    </div>
+
+                    <h3>Simple Example</h3>
+                    <div class="code-example">
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains
+    PRODUCT ||--o{ LINE-ITEM : "included in"
+```
+                    </div>
+
+                    <h3>Municipal Water District Database</h3>
+                    <div class="code-example">
+```mermaid
+erDiagram
+    WATER_DISTRICT ||--o{ CUSTOMER : serves
+    WATER_DISTRICT ||--o{ INVOICE : generates
+    CUSTOMER ||--o{ INVOICE : receives
+    CUSTOMER ||--o{ METER_READING : has
+    INVOICE ||--|{ LINE_ITEM : contains
+    METER_READING ||--|| LINE_ITEM : "billed in"
+    
+    WATER_DISTRICT {
+        int district_id PK
+        string district_name
+        string county
+        string contact_email
+        decimal tax_rate
+    }
+    
+    CUSTOMER {
+        int customer_id PK
+        int district_id FK
+        string name
+        string address
+        string account_number
+    }
+    
+    METER_READING {
+        int reading_id PK
+        int customer_id FK
+        date reading_date
+        decimal gallons_used
+        string meter_number
+    }
+    
+    INVOICE {
+        int invoice_id PK
+        int customer_id FK
+        int district_id FK
+        date invoice_date
+        decimal total_amount
+        string status
+    }
+    
+    LINE_ITEM {
+        int line_id PK
+        int invoice_id FK
+        int reading_id FK
+        string description
+        decimal amount
+    }
+```
+                    </div>
+
+                    <button class="try-it-button" onclick="loadExample('erd')">Try This Example</button>
+                </div>
+            </div>
+
+            <!-- Mermaid UML -->
+            <div id="mermaid-uml" class="tab-content">
+                <div class="lesson">
+                    <h2>UML Diagrams</h2>
+                    <p>UML (Unified Modeling Language) diagrams help visualize object-oriented designs and system architectures.</p>
+
+                    <h3>Class Diagrams</h3>
+                    <p>Class diagrams show the structure of classes and their relationships.</p>
+                    
+                    <div class="code-example">
+```mermaid
+classDiagram
+    class Animal {
+        +String name
+        +int age
+        +makeSound()
+        +eat()
+    }
+    
+    class Dog {
+        +String breed
+        +bark()
+    }
+    
+    class Cat {
+        +String color
+        +meow()
+    }
+    
+    Animal <|-- Dog
+    Animal <|-- Cat
+```
+                    </div>
+
+                    <h3>Municipal Bookkeeping System</h3>
+                    <div class="code-example">
+```mermaid
+classDiagram
+    class WaterDistrict {
+        +int districtId
+        +string districtName
+        +string county
+        +List~Customer~ customers
+        +generateMonthlyInvoices()
+        +calculateTaxes()
+        +submitToQuickBooks()
+    }
+    
+    class Customer {
+        +int customerId
+        +string accountNumber
+        +string name
+        +Address billingAddress
+        +List~MeterReading~ readings
+        +decimal currentBalance
+        +getUsageHistory()
+        +calculateCharges()
+    }
+    
+    class MeterReading {
+        +int readingId
+        +DateTime readingDate
+        +decimal gallonsUsed
+        +string meterNumber
+        +bool verified
+        +validate()
+    }
+    
+    class Invoice {
+        +int invoiceId
+        +DateTime invoiceDate
+        +decimal totalAmount
+        +string status
+        +List~LineItem~ lineItems
+        +generatePDF()
+        +sendEmail()
+        +exportToQB()
+    }
+    
+    class LineItem {
+        +int lineItemId
+        +string description
+        +decimal quantity
+        +decimal rate
+        +decimal amount
+        +calculate()
+    }
+    
+    class QuickBooksConnector {
+        +string connectionString
+        +bool isConnected
+        +connect()
+        +disconnect()
+        +exportInvoice(Invoice)
+        +sync1099Data()
+    }
+    
+    WaterDistrict "1" --> "many" Customer
+    Customer "1" --> "many" MeterReading
+    Customer "1" --> "many" Invoice
+    Invoice "1" --> "many" LineItem
+    Invoice --> QuickBooksConnector : uses
+```
+                    </div>
+
+                    <h3>Sequence Diagrams</h3>
+                    <p>Sequence diagrams show how objects interact in a particular sequence.</p>
+                    
+                    <div class="code-example">
+```mermaid
+sequenceDiagram
+    participant User
+    participant WebApp
+    participant PowerBI
+    participant SQLServer
+    participant QuickBooks
+    
+    User->>WebApp: Request Invoice Report
+    WebApp->>SQLServer: Query Invoice Data
+    SQLServer-->>WebApp: Return Dataset
+    WebApp->>PowerBI: Generate Report
+    PowerBI-->>WebApp: Return Visualizations
+    WebApp->>QuickBooks: Fetch Payment Status
+    QuickBooks-->>WebApp: Return Payment Info
+    WebApp-->>User: Display Complete Report
+```
+                    </div>
+
+                    <h3>State Diagrams</h3>
+                    <p>State diagrams show the different states an object can be in.</p>
+                    
+                    <div class="code-example">
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> PendingApproval: Submit
+    PendingApproval --> Approved: Manager Approves
+    PendingApproval --> Rejected: Manager Rejects
+    Rejected --> Draft: Revise
+    Approved --> Sent: Send to Customer
+    Sent --> Paid: Payment Received
+    Sent --> Overdue: 30 Days Past Due
+    Overdue --> Paid: Late Payment
+    Overdue --> Collections: 90 Days Past Due
+    Paid --> [*]
+    Collections --> [*]
+```
+                    </div>
+
+                    <button class="try-it-button" onclick="loadExample('uml')">Try This Example</button>
+                </div>
+            </div>
+
+            <!-- Playground -->
+            <div id="playground" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #2d3748;">Try It Yourself!</h2>
+                <div class="split-view">
+                    <div class="editor-panel">
+                        <div class="panel-header">Editor</div>
+                        <div class="editor-content">
+                            <textarea id="editor" placeholder="Type your Markdown or Mermaid code here...">
+# Welcome to the Playground!
+
+Try editing this text to see **Markdown** in action.
+
+## For Mermaid diagrams:
+Use code blocks with \`\`\`mermaid
+
+```mermaid
+flowchart TD
+    A[Start Here] --> B{Try Editing}
+    B --> C[See Results]
+    C --> D[Learn & Practice]
+```
+
+## Quick Tips:
+- Use **double asterisks** for bold
+- Use *single asterisks* for italic
+- Create lists with - or 1.
+- Make links like [this](https://example.com)
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="preview-panel">
+                        <div class="panel-header">Live Preview</div>
+                        <div class="preview-content" id="preview"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Tab switching
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Example loading
+        const examples = {
+            'markdown-basic': `# Markdown Basics Example
+
+## Text Formatting
+**This is bold text**
+*This is italic text*
+***This is bold and italic***
+~~This is strikethrough~~
+
+## Lists
+### Unordered List
+- Water Districts
+- Customers
+- Invoices
+  - Line Items
+  - Payment Terms
+
+### Ordered List
+1. Read meter
+2. Calculate charges
+3. Generate invoice
+4. Send to QuickBooks
+5. Mail to customer
+
+## Code Examples
+Inline code: \`var total = quantity * rate;\`
+
+Code block:
+\`\`\`sql
+SELECT district_name, COUNT(*) as customer_count
+FROM water_districts wd
+JOIN customers c ON wd.district_id = c.district_id
+GROUP BY district_name;
+\`\`\`
+
+## Links
+[MAC Website](https://example.com)
+[Power BI Documentation](https://docs.microsoft.com/power-bi)`,
+
+            'markdown-advanced': `# Advanced Markdown Features
+
+## Tables
+| District | County | Customers | Monthly Revenue |
+|:---------|:------:|----------:|----------------:|
+| District A | Travis | 150 | $12,500 |
+| District B | Harris | 230 | $18,900 |
+| District C | Dallas | 180 | $15,200 |
+
+## Blockquotes
+> "The key to modernizing MAC is integrating our data across all 1,000+ districts into a unified intelligence platform."
+> 
+> — Chase's IT Strategy
+
+## Task Lists
+- [x] Implement Power BI Report Server
+- [x] Develop QuickBooks automation
+- [ ] Replace QuickBooks Desktop
+- [ ] Implement SSO with Keycloak
+- [ ] Launch municipal intelligence platform
+
+## Nested Content
+1. **Phase 1: Foundation**
+   - Set up SQL Server infrastructure
+   - Implement basic reporting
+   
+2. **Phase 2: Automation**
+   - QuickBooks SDK integration
+   - Automated 1099 processing
+   
+3. **Phase 3: Intelligence**
+   - AI-powered dashboards
+   - Predictive analytics`,
+
+            'flowchart': `\`\`\`mermaid
+flowchart TD
+    Start[Monthly Billing Cycle Starts] --> Collect[Collect Meter Readings]
+    Collect --> Validate{All Readings Valid?}
+    Validate -->|No| Manual[Manual Review Required]
+    Manual --> Correct[Correct Data]
+    Correct --> Validate
+    Validate -->|Yes| Calculate[Calculate Charges]
+    Calculate --> Tax[Apply Tax Rates]
+    Tax --> Generate[Generate Invoices]
+    Generate --> Review{Amount > $5000?}
+    Review -->|Yes| Approval[Manager Approval]
+    Review -->|No| QB[Export to QuickBooks]
+    Approval --> Approved{Approved?}
+    Approved -->|Yes| QB
+    Approved -->|No| Reject[Return for Review]
+    Reject --> Calculate
+    QB --> Print[Print & Mail Invoices]
+    Print --> Email[Send Email Notifications]
+    Email --> End[Cycle Complete]
+\`\`\``,
+
+            'erd': `\`\`\`mermaid
+erDiagram
+    WATER_DISTRICT ||--o{ CUSTOMER : serves
+    WATER_DISTRICT ||--o{ INVOICE : generates
+    WATER_DISTRICT {
+        int district_id PK
+        string district_name
+        string county
+        string contact_name
+        string contact_email
+        decimal base_rate
+        decimal tax_rate
+        date established_date
+    }
+    
+    CUSTOMER ||--o{ INVOICE : receives
+    CUSTOMER ||--o{ METER_READING : has
+    CUSTOMER ||--o{ PAYMENT : makes
+    CUSTOMER {
+        int customer_id PK
+        int district_id FK
+        string account_number
+        string customer_name
+        string service_address
+        string billing_address
+        string email
+        string phone
+        date account_opened
+        string status
+    }
+    
+    METER_READING {
+        int reading_id PK
+        int customer_id FK
+        string meter_number
+        date reading_date
+        decimal previous_reading
+        decimal current_reading
+        decimal gallons_used
+        bool verified
+        string reader_name
+    }
+    
+    INVOICE ||--|{ INVOICE_LINE_ITEM : contains
+    INVOICE ||--o{ PAYMENT : "paid by"
+    INVOICE {
+        int invoice_id PK
+        int customer_id FK
+        int district_id FK
+        string invoice_number
+        date invoice_date
+        date due_date
+        decimal subtotal
+        decimal tax_amount
+        decimal total_amount
+        string status
+        string qb_reference
+    }
+    
+    INVOICE_LINE_ITEM {
+        int line_id PK
+        int invoice_id FK
+        int reading_id FK
+        string description
+        decimal quantity
+        decimal rate
+        decimal amount
+    }
+    
+    PAYMENT {
+        int payment_id PK
+        int invoice_id FK
+        int customer_id FK
+        date payment_date
+        decimal amount
+        string payment_method
+        string reference_number
+        string qb_deposit_id
+    }
+\`\`\``,
+
+            'uml': `\`\`\`mermaid
+sequenceDiagram
+    participant User as MAC Staff
+    participant Web as Web Application
+    participant API as .NET API
+    participant SQL as SQL Server
+    participant QB as QuickBooks
+    participant Email as Email Service
+    
+    User->>Web: Login to System
+    Web->>API: Authenticate User
+    API->>SQL: Verify Credentials
+    SQL-->>API: User Data
+    API-->>Web: Auth Token
+    
+    User->>Web: Request Monthly Billing
+    Web->>API: POST /billing/generate
+    API->>SQL: Get Meter Readings
+    SQL-->>API: Reading Data
+    
+    API->>API: Calculate Charges
+    API->>API: Apply Tax Rates
+    
+    API->>SQL: Save Invoices
+    SQL-->>API: Invoice IDs
+    
+    API->>QB: Export Invoices
+    QB-->>API: QB Reference Numbers
+    
+    API->>SQL: Update QB References
+    
+    API->>Email: Send Invoice Emails
+    Email-->>API: Email Sent Status
+    
+    API-->>Web: Billing Complete
+    Web-->>User: Show Results Dashboard
+    
+    User->>Web: View Power BI Report
+    Web->>API: Request Report Data
+    API->>SQL: Query Aggregated Data
+    SQL-->>API: Dataset
+    API-->>Web: JSON Data
+    Web-->>User: Display Interactive Charts
+\`\`\``
+        };
+
+        function loadExample(exampleKey) {
+            const editor = document.getElementById('editor');
+            editor.value = examples[exampleKey];
+            showTab('playground');
+            updatePreview();
+        }
+
+        // Live preview for playground
+        function updatePreview() {
+            const input = document.getElementById('editor').value;
+            const preview = document.getElementById('preview');
+            
+            // Check if input contains mermaid code blocks
+            if (input.includes('```mermaid')) {
+                // Process markdown with mermaid
+                const processed = input.replace(/```mermaid\n([\s\S]*?)```/g, (match, code) => {
+                    const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+                    return `<div class="mermaid" id="${id}">${code}</div>`;
+                });
+                
+                preview.innerHTML = marked.parse(processed);
+                
+                // Render mermaid diagrams
+                document.querySelectorAll('.mermaid').forEach((element) => {
+                    try {
+                        mermaid.render(element.id + '-svg', element.textContent).then(result => {
+                            element.innerHTML = result.svg;
+                        });
+                    } catch (error) {
+                        element.innerHTML = '<p style="color: red;">Mermaid syntax error: ' + error.message + '</p>';
+                    }
+                });
+            } else {
+                // Just render markdown
+                preview.innerHTML = marked.parse(input);
+            }
+        }
+
+        // Set up editor event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const editor = document.getElementById('editor');
+            if (editor) {
+                editor.addEventListener('input', updatePreview);
+                updatePreview(); // Initial render
+            }
+        });
+    </script>
+</body>
+</html>
